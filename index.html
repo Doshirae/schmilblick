@@ -21,13 +21,14 @@
 
             game.stage.backgroundColor = '#85b5e1';
             game.load.crossOrigin = 'anonymous';
-            game.load.image('monstre', 'images/monstre.png');
+            game.load.image('monstre','images/monstre');
             
         }
         
         function create () {
             var monstre;
             monstre = game.add.sprite(0, 0, 'monstre');
+            monstre.scale.setTo(0.5,0.5);
             game.physics.arcade.enable(monstre);
             
             monstre.body.collideWorldBounds = true;
