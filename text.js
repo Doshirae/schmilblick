@@ -31,7 +31,7 @@ window.onload = function() {
 		word = game.add.text(game.world.centerX-300, 0, "salut", style);
 		word2 = game.add.text(game.world.centerX-300, 50, "mystere", style);
 
-		game.input.keyboard.addCallbacks(this, null, null, keyPressAlt);
+		game.input.keyboard.addCallbacks(this, null, null, keyPress);
 
 		words = [word, word2];
 
@@ -50,10 +50,6 @@ window.onload = function() {
 
 			//  If they pressed one of the letters in the word, flag it as correct
 			if (char === letter){
-				correct[letter] = true;
-			}
-
-			if (correct[letter]){
 				removeFirstLetter(mot);
 			}
 		}
@@ -62,12 +58,13 @@ window.onload = function() {
 
 
 	function removeFirstLetter(mot){
-		var newText = "";
-		for(var i = 1; i< mot.text.length; i++){
-			newText += mot.text[i];
-		}
+		// var newText = "";
+		// for(var i = 1; i< mot.text.length; i++){
+		// 	newText += mot.text[i];
+		// }
 
-		mot.setText(newText);
+		mot.setText(mot.text.substr(1));
+;
 	}
 
 	function render() {
