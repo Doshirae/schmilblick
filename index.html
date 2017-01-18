@@ -25,13 +25,16 @@
                 var coeff = 3;
                 var tabSeq = [10];
                 var idMob = 0;
+                var idBonus = 0;
                 var vie = 4;
 
                 //Variables diverses a initialiser
                 var timerPop;
+                var timerPop2;
                 var monstre;
                 var spawn;
                 var tabMob = [];
+                var tabBonus = [];
                 var consonne = ["z", "r", "t", "p", "q", "s", "d", "f", "g", "h", "j", "k", "l", "m", "w", "x", "c", "v", "b", "n"];
                 var voyelle = ["a", "e", "y", "u", "i", "o"];
                 var correct = [];
@@ -67,6 +70,8 @@
                     game.load.image('monstre1', 'images/monstre1.png');
                     game.load.image('monstre2', 'images/monstre2.png');
                     game.load.image('monstre3', 'images/monstre3.png');
+                    game.load.image('bonus1', 'images/bonus1.png');
+                    game.load.image('bonus2', 'images/bonus2.png');
 
                     //sons
                     game.load.audio('spawn', 'son/spawn.wav');
@@ -103,10 +108,14 @@
 
                     //On initialise l'ensemble des mots possibles
                     initTabSeq();
+                    initTabSeq2();
                     console.log(tabSeq);
 
                     //Boucle principale qui fait pop les monstres
                     timerPop = game.time.events.loop(Phaser.Timer.SECOND, createMob, this);
+
+                    //Boucle principale qui fait pop les bonus
+                    timerPop2 = game.time.events.loop(10 * Phaser.Timer.SECOND, createBonus, this);
 
 
                     //Tableau qui détermine si les lettres ont été tapées
@@ -122,7 +131,7 @@
 
 
                 function update() {
-                    
+
                     //Mettre les objets au premier plan
                     game.world.bringToTop(plateau);
                     game.world.bringToTop(parcho);
@@ -131,7 +140,8 @@
 
                     //Boucle qui repère si les monstres dépassent la limite, enleve de la vie si ils touchent et les tuent quand toutes les lettres sont tapées
                     var cptMob = 0;
-                    while (tabMob[cptMob] != null) {
+                    var cptBonus = 0;
+                    while (tabMob[cptMob] != null /*& tabMob[cptBonus] != null */) {
                         if (tabMob[cptMob].y >= 675 && tabMob[cptMob].alive == true) {
                             tabMob[cptMob].kill();
                             vie--;
@@ -139,12 +149,40 @@
                                 game.paused = true;
                             }
                         }
-                        if (tabMob[cptMob].sequence.length == 0) { 
+
+                       /* if (tabBonus[cptBonus].y >= 675 && tabBonus[cptBonus].alive == true) {
+                            tabBonus[cptBonus].kill();
+                        }*/
+
+
+                        if (tabMob[cptMob].sequence.length == 0) {
                             tabMob[cptMob].kill();
                             score++;
                         }
+/*
+                        if (tabBonus[cptBoonus].sequence.length == 0) {
+                            tabBonus[cptBonus].kill();
+
+                            typeBonus = game.rnd.integerInRange(1, 4); //4 bonus différents
+
+                            if (typeBonus == 1) {
+                                vie++;
+                            }
+
+                            if (typeBonus == 2) {
+                                score = score + 5;
+                            }
+
+                            if (typeBonus == 3) {
+                                score = score + 5;
+                            }
+
+                        }*/
                         cptMob++;
+                        cptBonus++;
                     }
+
+
 
                 }
 
@@ -153,9 +191,9 @@
                 function render() {
                     game.debug.text(score);
                 }
-                
-                
-                
+
+
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,8 +222,8 @@
                     }
 
                 }
-                
-                
+
+
 
                 function createMob() { // Explicite
 
@@ -225,9 +263,47 @@
                     tabMob[idMob].text.body.velocity.y = 100;
                     idMob++;
                 }
-                
-                
-                
+
+                function createBonus() { // Explicite
+
+                    var randomColonne;
+                    var randomBonus;
+                    var nomBonus;
+
+                    coeffDown();
+                    spawn.play();
+                    randomBonus = game.rnd.integerInRange(1, 2);
+                    randomColonne = game.rnd.integerInRange(0, 5);
+                    randomSeq = game.rnd.integerInRange(0, 9);
+                    nomBonus = 'bonus' + randomBonus;
+                    bonus = game.add.sprite(randomColonne * 150, -200, nomBonus);
+                    if (idBonus > 5) {
+                        idBonus = 0;
+                    }
+                    tabBonus[idBonus] = bonus;
+                    tabBonus[idBonus].sequence = tabSeq[randomSeq];
+
+
+                    if (tabSeq[randomSeq].length != 4) {
+                        tabBonus[idBonus].text = game.add.text((randomColonne * 150) + 22, -50, tabSeq[randomSeq], 'Macondo');
+                    } else {
+                        tabBonus[idBonus].text = game.add.text((randomColonne * 150) + 38, -50, tabSeq[randomSeq], 'Macondo');
+                    }
+
+
+                    tabBonus[idBonus].sequence.fontSize = 40;
+
+                    bonus.scale.setTo(0.5, 0.5);
+                    game.physics.arcade.enable(bonus);
+                    game.physics.arcade.enable(tabBonus[idBonus].text);
+
+                    bonus.body.velocity.y = 100;
+                    tabBonus[idBonus].text.body.velocity.y = 100;
+                    idBonus++;
+                }
+
+
+
 
                 function coeffDown() { // Fonction qui accélère le spawn
                     if (coeff <= 2000) {
