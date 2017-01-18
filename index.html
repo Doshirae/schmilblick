@@ -20,6 +20,7 @@
         //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
 
         var game = new Phaser.Game(950, 650, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+        var monstre;
 
         function preload () {
 
@@ -29,7 +30,6 @@
         }
         
         function create () {
-            var monstre;
             
             
             
@@ -41,12 +41,14 @@
             monstre.body.gravity.y = 10;
         }
         
-        function killMob() {
-            
-        }
+       
         
         function update () {
             
+            if (monstre.y==800) {
+                monstre.destroy();
+                console.log("mort");
+            }
             
         }
         
