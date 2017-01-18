@@ -29,6 +29,8 @@
         }
         
         var coeff = 5;
+        var timerPop;
+        var timer;
         function create () { 
             timerPop = game.time.events.loop(5*(Phaser.Timer.SECOND), createMob, this);
             timer.loop(coeff*1000, coeffDown, this);
@@ -63,7 +65,6 @@
         }
         
         function render() {
-            game.debug.text('temps: ' + coeff, 32, 64);
         }
 
     };
