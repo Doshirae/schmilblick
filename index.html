@@ -17,13 +17,17 @@
 
         var game = new Phaser.Game(900, 750, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
         
+        
         var coeff = 1;
         var timerPop;
         var monstre;
         var spawn;
         var tabMob = [];
+        var tabSeq = [];
         var idMob = 0;
-        
+        var vie = 1;
+       
+       
         function preload () {
             game.stage.backgroundColor = '#85b5e1';
             game.load.crossOrigin = 'anonymous';
@@ -42,12 +46,16 @@
         }
         
         function update () {
-           var i=0;
-           while (tabMob[i] != null){
-               if (tabMob[i].body.onFloor()){
-                   tabMob[i].kill();
+           var cptMob = 0;
+           while (tabMob[cptMob] != null){
+               if (tabMob[cptMob].body.onFloor() && tabMob[cptMob].alive==true){
+                   tabMob[cptMob].kill(); 
+                   vie--;
+                   if(vie <=0){
+                       game.paused = true;
+                   }
                }
-               i++;
+               cptMob++;
            }
             
         }
@@ -81,6 +89,8 @@
             coeff = 1*coeff;
             timerPop.delay = coeff*1000;
         }
+        
+        //function createSeq
 
     };
     
