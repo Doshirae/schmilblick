@@ -87,6 +87,10 @@
 
                     parcho = game.add.sprite(250, 680, 'parcho');
                     parcho.scale.setTo(0.8, 0.8);
+                    
+                    
+                    game.world.bringToTop(plateau);
+                    game.world.bringToTop(parcho);
 
 
                     //Ajout des images qui changent en fonction d'états
@@ -126,10 +130,10 @@
                 function update() {
                     
                     //Mettre les objets au premier plan
-                    game.world.bringToTop(plateau);
-                    game.world.bringToTop(parcho);
                     game.world.bringToTop(joubert);
                     animVie();
+                    game.world.bringToTop(coeur);
+
                     
 
                     //Boucle qui repère si les monstres dépassent la limite, enleve de la vie si ils touchent et les tuent quand toutes les lettres sont tapées
@@ -151,8 +155,7 @@
                         cptMob++;
                     }
                     affiScore.setText(score);
-                  game.world.bringToTop(joubert);
-
+                    
 
                 }
 
@@ -271,17 +274,20 @@
                     nbVie = 'coeur'+vie;
                     coeur = game.add.sprite(15, 680, nbVie);
                     coeur.scale.setTo(0.7, 0.7);
-                    game.world.bringToTop(coeur);
                 }
                 
                 function animJoubert(joubert){
                   
                     joubert.kill();
                     joubert = game.add.sprite(660, 510, 'joubertS');
-                    game.world.bringToTop(joubert);
+                    joubert.scale.setTo(0.8, 0.8);
+
+
                     setTimeout(function() {
                         joubert.kill();
                         joubert = game.add.sprite(660, 510, 'joubertN');
+                        joubert.scale.setTo(0.8, 0.8);
+
                     }, 300);
 
                 }
