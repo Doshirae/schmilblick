@@ -16,55 +16,70 @@
         //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
 
         var game = new Phaser.Game(900, 750, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
-
+        
+        var coeff = 1;
+        var timerPop;
+        var monstre;
+        var spawn;
+        var tabMob = [];
+        var idMob = 0;
+        
         function preload () {
-
             game.stage.backgroundColor = '#85b5e1';
             game.load.crossOrigin = 'anonymous';
-            game.load.image('monstre','images/monstre');
-            game.load.image('monstre1','images/monstre1');
-            game.load.image('monstre2','images/monstre2');
-            game.load.image('monstre3','images/monstre3');
+            game.load.image('monstre','images/monstre.png');
+            game.load.image('monstre1','images/monstre1.png');
+            game.load.image('monstre2','images/monstre2.png');
+            game.load.image('monstre3','images/monstre3.png');
+            
+            game.load.audio('spawn', 'son/spawn.wav');
+        }
+        
+        
+        function create () { 
+            spawn = game.add.audio('spawn');
+            timerPop = game.time.events.loop(1*(Phaser.Timer.SECOND), createMob, this);
+        }
+        
+        function update () {
+           var i=0;
+           while (tabMob[i] != null){
+               if (tabMob[i].body.onFloor()){
+                   tabMob[i].kill();
+               }
+               i++;
+           }
             
         }
         
-        var coeff = 5;
-        var timerPop;
-        var timer;
-        function create () { 
-            timerPop = game.time.events.loop(5*(Phaser.Timer.SECOND), createMob, this);
-            timer.loop(coeff*1000, coeffDown, this);
+        function render() {
+           
         }
-        
-        var monstre;
+    
         function createMob (){
             
             var randomColonne;
             var randomMonstre;
             var nomMonstre;
-            coeffDown();
             
+            coeffDown();
+            spawn.play();
             randomMonstre = game.rnd.integerInRange(1, 3);
             randomColonne = game.rnd.integerInRange(0, 6);
             nomMonstre = 'monstre'+randomMonstre;
             monstre = game.add.sprite(randomColonne*150, 0, nomMonstre);
+            tabMob[idMob]=monstre;
+            console.log(tabMob);
+            idMob++;
             monstre.scale.setTo(0.5,0.5);
             game.physics.arcade.enable(monstre);
             monstre.body.collideWorldBounds = true;
-            monstre.body.velocity.y = 100;
+            monstre.body.velocity.y = 500;
         }
         
         function coeffDown(){
-            coeff = 0.99*coeff;
+            coeff = 1*coeff;
             timerPop.delay = coeff*1000;
-        }
-        
-        function update () {
-            
-            
-        }
-        
-        function render() {
         }
 
     };
