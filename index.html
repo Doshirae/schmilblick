@@ -23,12 +23,16 @@
 
         function preload () {
 
-            game.load.image('logo', 'phaser.png');
+            game.load.image('monstre', 'images/monstre.png');
+            game.stage.backgroundColor = "#85B5E1";
             
         }
         
         function create () {
             var monstre;
+            
+            
+            
             monstre = game.add.sprite(0, 0, 'monstre');
             monstre.scale.setTo(0.5,0.5);
             game.physics.arcade.enable(monstre);
