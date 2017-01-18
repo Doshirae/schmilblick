@@ -26,6 +26,10 @@
         }
         
         function create () {
+            game.time.events.loop(5*(Phaser.Timer.SECOND), createMob, this);
+        }
+        
+        function createMob (){
             var monstre;
             monstre = game.add.sprite(0, 0, 'monstre');
             monstre.scale.setTo(0.5,0.5);
@@ -33,6 +37,7 @@
             
             monstre.body.collideWorldBounds = true;
             monstre.body.gravity.y = 10;
+            
         }
         
         function update () {
@@ -45,8 +50,7 @@
         }
 
     };
-
+    
     </script>
-
     </body>
 </html>
