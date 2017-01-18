@@ -47,7 +47,7 @@
                 var joubertV;
                 var coeur;
                 var affiScore;
-
+                
                 function preload() {
                     //Polices
                     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -56,7 +56,9 @@
                     game.load.crossOrigin = 'anonymous';
 
                     //Images
+                    
                     game.load.image('monstre', 'images/monstre.png');
+                    game.load.image('mort', 'images/mort.png');
                     game.load.image('background', 'images/background.png');
                     game.load.image('coeur0', 'images/coeur0.png');
                     game.load.image('coeur1', 'images/coeur1.png');
@@ -68,12 +70,12 @@
                     game.load.image('joubertS', 'images/joubertSort.png');
                     game.load.image('parcho', 'images/parcho.png');
                     game.load.image('plateau', 'images/plateau.png');
-                    game.load.image('monstre1', 'images/monstre1.png');
-                    game.load.image('monstre2', 'images/monstre2.png');
-                    game.load.image('monstre3', 'images/monstre3.png');
+                    game.load.spritesheet('monstre1', 'images/animonstre1.png', 300, 300, 2);
+                    game.load.spritesheet('monstre2', 'images/animonstre2.png', 300, 300, 2);
+                    game.load.spritesheet('monstre3', 'images/animonstre3.png', 300, 300, 4);
 
                     //sons
-                    game.load.audio('spawn', 'son/spawn.wav');
+                    game.load.audio('neck', 'son/neck.mp3');
                 }
 
 
@@ -86,6 +88,7 @@
                    
 
                     //Ajout des images
+                    
                     background = game.add.sprite(0, 0, 'background');
                     
                     plateau = game.add.sprite(game.world.centerX, game.world.height, 'plateau');
@@ -115,7 +118,7 @@
                     coeur.scale.setTo(0.7, 0.7);
 
                     //Audio
-                    spawn = game.add.audio('spawn');
+                    neck = game.add.audio('neck');
 
 
                     //On initialise l'ensemble des mots possibles
@@ -135,7 +138,7 @@
                     game.input.keyboard.addCallbacks(this, null, null, keyPress);
                     
                     
-                    affiScore = game.add.text(820, 20, score, 'Macondo');
+                    affiScore = game.add.text(460, 712, score, 'Macondo');
 
                 }
 
@@ -156,7 +159,7 @@
                     //Boucle qui repère si les monstres dépassent la limite, enleve de la vie si ils touchent et les tuent quand toutes les lettres sont tapées
                     var cptMob = 0;
                     while (tabMob[cptMob] != null) {
-                        if (tabMob[cptMob].y >= 675 && tabMob[cptMob].alive == true) {
+                        if (tabMob[cptMob].y >= 650 && tabMob[cptMob].alive == true) {
                             tabMob[cptMob].kill();
                             vie--;
                             animJoubertD(joubert);
@@ -166,9 +169,9 @@
                         }
                         if (tabMob[cptMob].sequence.length == 0 && tabMob[cptMob].alive==true) { 
                             tabMob[cptMob].kill();
-                            
+                            animMort(cptMob);
                             animJoubert(joubert);
-                            score++;
+                            score+=100;
                             
                         }
                         cptMob++;
@@ -222,16 +225,33 @@
                     var randomColonne;
                     var randomMonstre;
                     var nomMonstre;
-
+                    var randomSeq;
                     coeffDown();
                    
-                    spawn.play();
                     randomMonstre = game.rnd.integerInRange(1, 3);
                     randomColonne = game.rnd.integerInRange(0, 5);
+                    if(idMob%2 === 0){
+                        if(randomColonne%2 !== 0){
+                            if (randomColonne ===5){
+                                randomColonne--;
+                            }
+                            else{
+                                randomColonne++;
+                            }
+                        }
+                    }
+                        else{
+                             if(randomColonne%2 !== 1){
+                                 randomColonne++;
+                             }
+                        }
+                    
                     randomSeq = game.rnd.integerInRange(0, 19);
                     nomMonstre = 'monstre' + randomMonstre;
                     monstre = game.add.sprite(randomColonne * 150, -200, nomMonstre);
-                    if (idMob > 50) {
+                    var anim = monstre.animations.add('anim');
+                    monstre.animations.play('anim', 2, true);
+                    if (idMob > 50){
                         idMob = 0;
                     }
                     tabMob[idMob] = monstre;
@@ -294,7 +314,6 @@
                 
                 
                 function animVie(){
-                    
                     coeur.kill();
                     nbVie = 'coeur'+vie;
                     coeur = game.add.sprite(15, 680, nbVie);
@@ -302,14 +321,10 @@
                 }
                 
                 function animJoubert(joubert){
-                  
                     joubert.visible = false;
-
                     joubertS.visible= true;
-
+                    
                     setTimeout(function() {
-                        
-                       
                     joubertS.visible = false;
                     joubert.visible= true;
                     }, 400);
@@ -318,17 +333,22 @@
                 }
                 
                  function animJoubertD(joubert){
-                  
-                    
                     joubert.visible = false;
                     joubertV.visible= true;
 
                     setTimeout(function() {
                        joubertV.visible= false;
                        joubert.visible = true;
-                    
-                    
                     }, 400);
+                }
+                
+                function animMort(idMob){
+                    neck.play();
+                    var posX = tabMob[idMob].x; 
+                    var posY = tabMob[idMob].y;
+                    var mort = game.add.sprite(posX-10, posY, 'mort');
+                    mort.scale.setTo(0.6, 0.6);
+                    game.add.tween(mort).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, false);
                     
                 }
                 
