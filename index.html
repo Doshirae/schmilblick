@@ -76,6 +76,7 @@
 
                     //sons
                     game.load.audio('neck', 'son/neck.mp3');
+                    game.load.audio('music1', 'son/music1.mp3');
                 }
 
 
@@ -119,7 +120,9 @@
 
                     //Audio
                     neck = game.add.audio('neck');
-
+                    music1 = game.add.audio('music1');
+                    
+                    music1.loopFull(1);
 
                     //On initialise l'ensemble des mots possibles
                     initTabSeq();
@@ -165,6 +168,7 @@
                             animJoubertD(joubert);
                             if (vie <= 0) {
                                 game.paused = true;
+                                music1.onMute();
                             }
                         }
                         if (tabMob[cptMob].sequence.length == 0 && tabMob[cptMob].alive==true) { 
