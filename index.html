@@ -23,7 +23,7 @@
                 //Variables de jeu
                 var score = 0;
                 var coeff = 0;
-                var tabSeq = [10];
+                var tabSeq = [20];
                 var idMob = 0;
                 var vie = 4;
 
@@ -36,16 +36,17 @@
                 var voyelle = ["a", "e", "u", "i", "o"];
                 var correct = [];
                 var words = [];
+                var groupeMobs;
+                var backGround;
 
                 //Variables graphiques
                 var plateau;
                 var parcho;
                 var joubert;
+                var joubertS;
+                var joubertV;
                 var coeur;
                 var affiScore;
-                
-                var items;
-              
 
                 function preload() {
                     //Polices
@@ -77,33 +78,41 @@
 
 
                 function create() {
+                 
+                    //Groupes pour positionner les images
+                    groupeMobs = game.add.group();
+                    
+                    
+                   
 
                     //Ajout des images
-                    /*game.add.sprite(0, 0, 'background');
+                    background = game.add.sprite(0, 0, 'background');
+                    
                     plateau = game.add.sprite(game.world.centerX, game.world.height, 'plateau');
                     plateau.anchor.setTo(0.5, 1);
 
                     parcho = game.add.sprite(250, 680, 'parcho');
-                    parcho.scale.setTo(0.8, 0.8);*/
+                    parcho.scale.setTo(0.8, 0.8);
                     
-                    items = game.add.group();
-                    items.create(0,0,'background')
-                    plateau = items.create(game.world.centerX, game.world.height, 'plateau')
-                        plateau.anchor.setTo(0.5, 1);
-                    parcho = items.create(250, 680, 'parcho')
-                        parcho.scale.setTo(0.8, 0.8);
-                    joubert = items.create(660, 510, 'joubertN')
-                        joubert.scale.setTo(0.8, 0.8);
-                    coeur = items.create(15, 680, 'coeur4')
-                        coeur.scale.setTo(0.7, 0.7);
+                    
+                    game.world.bringToTop(plateau);
+                    game.world.bringToTop(parcho);
+
 
                     //Ajout des images qui changent en fonction d'états
-                    /*joubert = game.add.sprite(660, 510, 'joubertN');
+                    joubert = game.add.sprite(660, 510, 'joubertN');
                     joubert.scale.setTo(0.8, 0.8);
                     
-
+                    joubertS = game.add.sprite(660, 510, 'joubertS');
+                    joubertS.scale.setTo(0.8, 0.8);
+                    joubertS.visible=false;
+                    
+                    joubertV = game.add.sprite(660, 510, 'joubertV');
+                    joubertV.scale.setTo(0.8, 0.8);
+                    joubertV.visible=false;
+                     
                     coeur = game.add.sprite(15, 680, 'coeur4');
-                    coeur.scale.setTo(0.7, 0.7);*/
+                    coeur.scale.setTo(0.7, 0.7);
 
                     //Audio
                     spawn = game.add.audio('spawn');
@@ -127,9 +136,6 @@
                     
                     
                     affiScore = game.add.text(820, 20, score, 'Macondo');
-                    
-
-                    
 
                 }
 
@@ -138,17 +144,12 @@
                 function update() {
                     
                     //Mettre les objets au premier plan
-
-                   /*game.world.bringToTop(plateau);
-                    game.world.bringToTop(parcho);
-                    game.world.bringToTop(coeur);
-                    game.world.bringToTop(joubert);*/
-        
-                    items.bringToTop(plateau);
-                    items.bringToTop(parcho);
-                    items.bringToTop(coeur);
-                    items.bringToTop(joubert);
+                    game.world.sendToBack(background);
+                    
+                    game.world.bringToTop(joubert);
                     animVie();
+                    game.world.bringToTop(coeur);
+                    
 
                     
 
@@ -158,12 +159,14 @@
                         if (tabMob[cptMob].y >= 675 && tabMob[cptMob].alive == true) {
                             tabMob[cptMob].kill();
                             vie--;
+                            animJoubertD(joubert);
                             if (vie <= 0) {
                                 game.paused = true;
                             }
                         }
                         if (tabMob[cptMob].sequence.length == 0 && tabMob[cptMob].alive==true) { 
                             tabMob[cptMob].kill();
+                            
                             animJoubert(joubert);
                             score++;
                             
@@ -232,6 +235,7 @@
                         idMob = 0;
                     }
                     tabMob[idMob] = monstre;
+                    
                     tabMob[idMob].sequence = tabSeq[randomSeq];
 
 
@@ -240,7 +244,11 @@
                     } else {
                         tabMob[idMob].text = game.add.text((randomColonne * 150) + 38, -50, tabSeq[randomSeq], 'Macondo');
                     }
-
+                    
+                    tabMob[idMob].text.font='Macando';
+                    tabMob[idMob].text.fontSize=40;
+                    groupeMobs.add(tabMob[idMob]);
+                    groupeMobs.add(tabMob[idMob].text);
 
                     tabMob[idMob].sequence.fontSize = 40;
                     console.log(tabMob);
@@ -252,7 +260,6 @@
                     monstre.body.velocity.y = 100;
                     tabMob[idMob].text.body.velocity.y = 100;
                     idMob++;
-                    mob =  items.addAt(tabMob[idMob],0);
                 }
                 
                 
@@ -288,6 +295,7 @@
                 
                 function animVie(){
                     
+                    coeur.kill();
                     nbVie = 'coeur'+vie;
                     coeur = game.add.sprite(15, 680, nbVie);
                     coeur.scale.setTo(0.7, 0.7);
@@ -295,17 +303,33 @@
                 
                 function animJoubert(joubert){
                   
-                    joubert.kill();
-                    joubert = game.add.sprite(660, 510, 'joubertS');
-                    joubert.scale.setTo(0.8, 0.8);
+                    joubert.visible = false;
 
+                    joubertS.visible= true;
 
                     setTimeout(function() {
-                        joubert.kill();
-                        joubert = items.create(660, 510, 'joubertN');
-                        joubert.scale.setTo(0.8, 0.8);
-                    }, 300);
+                        
+                       
+                    joubertS.visible = false;
+                    joubert.visible= true;
+                    }, 400);
+                    
+                    
+                }
+                
+                 function animJoubertD(joubert){
+                  
+                    
+                    joubert.visible = false;
+                    joubertV.visible= true;
 
+                    setTimeout(function() {
+                       joubertV.visible= false;
+                       joubert.visible = true;
+                    
+                    
+                    }, 400);
+                    
                 }
                 
 
