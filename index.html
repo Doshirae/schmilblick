@@ -4,11 +4,15 @@
         <meta charset="UTF-8" />
         <title>schmilblick</title>
         <script src="phaser.js"></script>
+        <script src="tarass.js"></script>
     </head>
     <body>
 
     <script type="text/javascript">
+        
+    tarass.tarass();
 
+    
     window.onload = function() {
 
         //  Note that this html file is set to pull down Phaser 2.5.0 from the JS Delivr CDN.
@@ -19,25 +23,22 @@
 
         function preload () {
 
-            game.stage.backgroundColor = '#85b5e1';
-            game.load.crossOrigin = 'anonymous';
-            game.load.image('monstre','images/monstre');
+            game.load.image('monstre', 'images/monstre.png');
+            game.stage.backgroundColor = "#85B5E1";
             
         }
         
         function create () {
-            game.time.events.loop(5*(Phaser.Timer.SECOND), createMob, this);
-        }
-        
-        function createMob (){
             var monstre;
+            
+            
+            
             monstre = game.add.sprite(0, 0, 'monstre');
             monstre.scale.setTo(0.5,0.5);
             game.physics.arcade.enable(monstre);
             
             monstre.body.collideWorldBounds = true;
             monstre.body.gravity.y = 10;
-            
         }
         
         function killMob() {
@@ -54,7 +55,8 @@
         }
 
     };
-    
+
     </script>
+
     </body>
 </html>
