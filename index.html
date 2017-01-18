@@ -24,13 +24,20 @@
         function preload () {
 
             game.load.image('monstre', 'images/monstre.png');
+            game.load.image('joubert', 'images/joubert.png');
             game.stage.backgroundColor = "#85B5E1";
             
         }
         
+        var monstre;
+        var joubert;
+        
         function create () {
-            var monstre;
             
+            
+            
+            joubert = game.add.sprite(475, 325, 'joubert');
+            joubert.vie = 0;
             
             
             monstre = game.add.sprite(0, 0, 'monstre');
@@ -42,10 +49,16 @@
         }
         
         function update () {
-            
-            
+        
+        
+        
+        if(joubert.vie == 0){
+            joubert.kill;
+            console.log("mort");
         }
         
+        }
+    
         function render() {
             
         }
