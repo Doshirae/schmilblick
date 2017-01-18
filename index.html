@@ -9,37 +9,38 @@
 
     <script type="text/javascript">
         
-        var timer;
+         
 
     window.onload = function() {
-        
-        
 
         //  Note that this html file is set to pull down Phaser 2.5.0 from the JS Delivr CDN.
         //  Although it will work fine with this tutorial, it's almost certainly not the most current version.
         //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
 
-        var game = new Phaser.Game(950, 650, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+        var game = new Phaser.Game(900, 750, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
         var monstre;
-
+        
         function preload () {
 
             game.stage.backgroundColor = '#85b5e1';
             game.load.crossOrigin = 'anonymous';
-            game.load.image('monstre','images/monstre');
-            game.load.image('monstre1','images/monstre1');
-            game.load.image('monstre2','images/monstre2');
-            game.load.image('monstre3','images/monstre3');
+            game.load.image('monstre','images/monstre.png');
+            game.load.image('monstre1','images/monstre1.png');
+            game.load.image('monstre2','images/monstre2.png');
+            game.load.image('monstre3','images/monstre3.png');
             
         }
         
         var coeff = 5;
+        var timerPop;
+        var timer;
+        
         function create () { 
-            timerPop = game.time.events.loop(5*(Phaser.Timer.SECOND), createMob, this);
+            timerPop = this.time.events.loop(5*(Phaser.Timer.SECOND), createMob, this);
             timer.loop(coeff*1000, coeffDown, this);
         }
         
-        
+       
         function createMob (){
             
             var randomColonne;
@@ -62,19 +63,13 @@
             timerPop.delay = coeff*1000;
         }
         
-       
-        
         function update () {
             
-            if (monstre.y==800) {
-                monstre.destroy();
-                console.log("mort");
-            }
+           //console.log(monstre);
             
         }
         
         function render() {
-            game.debug.text('temps: ' + coeff, 32, 64);
         }
 
     };
