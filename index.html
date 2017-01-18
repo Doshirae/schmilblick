@@ -25,12 +25,10 @@
                 var coeff = 0;
                 var tabSeq = [10];
                 var idMob = 0;
-                var idBonus = 0;
                 var vie = 4;
 
                 //Variables diverses a initialiser
                 var timerPop;
-                var timerPop2;
                 var monstre;
                 var spawn;
                 var tabMob = [];
@@ -38,6 +36,8 @@
                 var voyelle = ["a", "e", "u", "i", "o"];
                 var correct = [];
                 var words = [];
+                var groupeMobs;
+                var backGround;
 
                 //Variables graphiques
                 var plateau;
@@ -69,8 +69,6 @@
                     game.load.image('monstre1', 'images/monstre1.png');
                     game.load.image('monstre2', 'images/monstre2.png');
                     game.load.image('monstre3', 'images/monstre3.png');
-                    game.load.image('bonus1', 'images/bonus1.png');
-                    game.load.image('bonus2', 'images/bonus2.png');
 
                     //sons
                     game.load.audio('spawn', 'son/spawn.wav');
@@ -80,17 +78,23 @@
                 function create() {
                  
                     //Groupes pour positionner les images
+                    groupeMobs = game.add.group();
                     
                     
                    
 
                     //Ajout des images
-                    game.add.sprite(0, 0, 'background');
+                    background = game.add.sprite(0, 0, 'background');
+                    
                     plateau = game.add.sprite(game.world.centerX, game.world.height, 'plateau');
                     plateau.anchor.setTo(0.5, 1);
 
                     parcho = game.add.sprite(250, 680, 'parcho');
                     parcho.scale.setTo(0.8, 0.8);
+                    
+                    
+                    game.world.bringToTop(plateau);
+                    game.world.bringToTop(parcho);
 
 
                     //Ajout des images qui changent en fonction d'états
@@ -106,14 +110,10 @@
 
                     //On initialise l'ensemble des mots possibles
                     initTabSeq();
-                    initTabSeq2();
                     console.log(tabSeq);
 
                     //Boucle principale qui fait pop les monstres
                     timerPop = game.time.events.loop(2*(Phaser.Timer.SECOND), createMob, this);
-
-                    //Boucle principale qui fait pop les bonus
-                    timerPop2 = game.time.events.loop(10 * Phaser.Timer.SECOND, createBonus, this);
 
 
                     //Tableau qui détermine si les lettres ont été tapées
@@ -132,18 +132,20 @@
 
 
                 function update() {
-
+                    
                     //Mettre les objets au premier plan
-                    game.world.bringToTop(plateau);
-                    game.world.bringToTop(parcho);
+                    game.world.sendToBack(background);
+                    
                     game.world.bringToTop(joubert);
                     animVie();
+                    game.world.bringToTop(coeur);
+                    
+
                     
 
                     //Boucle qui repère si les monstres dépassent la limite, enleve de la vie si ils touchent et les tuent quand toutes les lettres sont tapées
                     var cptMob = 0;
-                    var cptBonus = 0;
-                    while (tabMob[cptMob] != null /*& tabMob[cptBonus] != null */) {
+                    while (tabMob[cptMob] != null) {
                         if (tabMob[cptMob].y >= 675 && tabMob[cptMob].alive == true) {
                             tabMob[cptMob].kill();
                             vie--;
@@ -151,43 +153,16 @@
                                 game.paused = true;
                             }
                         }
- 
-                        if (tabBonus[cptBonus].y >= 675 && tabBonus[cptBonus].alive == true) {
-                            tabBonus[cptBonus].kill();
-                        } 
                         if (tabMob[cptMob].sequence.length == 0 && tabMob[cptMob].alive==true) { 
                             tabMob[cptMob].kill();
                             animJoubert(joubert);
                             score++;
                             
                         }
-/*
-                        if (tabBonus[cptBoonus].sequence.length == 0) {
-                            tabBonus[cptBonus].kill();
-
-                            typeBonus = game.rnd.integerInRange(1, 4); //4 bonus différents
-
-                            if (typeBonus == 1) {
-                                vie++;
-                            }
-
-                            if (typeBonus == 2) {
-                                score = score + 5;
-                            }
-
-                            if (typeBonus == 3) {
-                                score = score + 5;
-                            }
-
-                        }*/
                         cptMob++;
-                        cptBonus++;
                     }
                     affiScore.setText(score);
-                  game.world.bringToTop(joubert);
-
-
-
+                    
 
                 }
 
@@ -196,9 +171,9 @@
                 function render() {
                     game.debug.text(score);
                 }
-
-
-
+                
+                
+                
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -227,8 +202,8 @@
                     }
 
                 }
-
-
+                
+                
 
                 function createMob() { // Explicite
 
@@ -248,6 +223,7 @@
                         idMob = 0;
                     }
                     tabMob[idMob] = monstre;
+                    
                     tabMob[idMob].sequence = tabSeq[randomSeq];
 
 
@@ -256,7 +232,8 @@
                     } else {
                         tabMob[idMob].text = game.add.text((randomColonne * 150) + 38, -50, tabSeq[randomSeq], 'Macondo');
                     }
-
+                    groupeMobs.add(tabMob[idMob]);
+                    groupeMobs.add(tabMob[idMob].text);
 
                     tabMob[idMob].sequence.fontSize = 40;
                     console.log(tabMob);
@@ -269,48 +246,9 @@
                     tabMob[idMob].text.body.velocity.y = 100;
                     idMob++;
                 }
-
-                function createBonus() { // Explicite
-
-                    var randomColonne;
-                    var randomBonus;
-                    var nomBonus;
-
-                    coeffDown();
-                    spawn.play();
-                    randomBonus = game.rnd.integerInRange(1, 2);
-                    randomColonne = game.rnd.integerInRange(0, 5);
-                    randomSeq = game.rnd.integerInRange(0, 9);
-                    nomBonus = 'bonus' + randomBonus;
-                    bonus = game.add.sprite(randomColonne * 150, -200, nomBonus);
-                    if (idBonus > 5) {
-                        idBonus = 0;
-                    }
-                    tabBonus[idBonus] = bonus;
-                    tabBonus[idBonus].sequence = tabSeq[randomSeq];
-
-
-                    if (tabSeq[randomSeq].length != 4) {
-                        tabBonus[idBonus].text = game.add.text((randomColonne * 150) + 22, -50, tabSeq[randomSeq], 'Macondo');
-                    } else {
-                        tabBonus[idBonus].text = game.add.text((randomColonne * 150) + 38, -50, tabSeq[randomSeq], 'Macondo');
-                    }
-
-
-                    tabBonus[idBonus].sequence.fontSize = 40;
-
-                    bonus.scale.setTo(0.5, 0.5);
-                    game.physics.arcade.enable(bonus);
-                    game.physics.arcade.enable(tabBonus[idBonus].text);
-
-                    bonus.body.velocity.y = 100;
-                    tabBonus[idBonus].text.body.velocity.y = 100;
-                    idBonus++;
-                }
-
-
-
-
+                
+                
+               
                 function coeffDown() { // Fonction qui accélère le spawn
                     if (coeff <= 1000) {
                         coeff += 10;
@@ -338,30 +276,28 @@
                     }
                 }
                 
-                function initTabSeq2() { //Init le tyableau des mots possibles
-                    for (var i = 0; i < 20; i++) {
-                        tabSeq[i] = createSequence();
-                    }
-                }
-                
                 
                 
                 function animVie(){
                     
+                    coeur.kill();
                     nbVie = 'coeur'+vie;
                     coeur = game.add.sprite(15, 680, nbVie);
                     coeur.scale.setTo(0.7, 0.7);
-                    game.world.bringToTop(coeur);
                 }
                 
                 function animJoubert(joubert){
                   
                     joubert.kill();
                     joubert = game.add.sprite(660, 510, 'joubertS');
-                    game.world.bringToTop(joubert);
+                    joubert.scale.setTo(0.8, 0.8);
+
+
                     setTimeout(function() {
                         joubert.kill();
                         joubert = game.add.sprite(660, 510, 'joubertN');
+                        joubert.scale.setTo(0.8, 0.8);
+
                     }, 300);
 
                 }
