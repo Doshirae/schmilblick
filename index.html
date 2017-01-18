@@ -36,6 +36,8 @@
                 var voyelle = ["a", "e", "u", "i", "o"];
                 var correct = [];
                 var words = [];
+                var groupeMobs;
+                var backGround;
 
                 //Variables graphiques
                 var plateau;
@@ -76,12 +78,14 @@
                 function create() {
                  
                     //Groupes pour positionner les images
+                    groupeMobs = game.add.group();
                     
                     
                    
 
                     //Ajout des images
-                    game.add.sprite(0, 0, 'background');
+                    background = game.add.sprite(0, 0, 'background');
+                    
                     plateau = game.add.sprite(game.world.centerX, game.world.height, 'plateau');
                     plateau.anchor.setTo(0.5, 1);
 
@@ -130,9 +134,12 @@
                 function update() {
                     
                     //Mettre les objets au premier plan
+                    game.world.sendToBack(background);
+                    
                     game.world.bringToTop(joubert);
                     animVie();
                     game.world.bringToTop(coeur);
+                    
 
                     
 
@@ -216,6 +223,7 @@
                         idMob = 0;
                     }
                     tabMob[idMob] = monstre;
+                    
                     tabMob[idMob].sequence = tabSeq[randomSeq];
 
 
@@ -224,7 +232,8 @@
                     } else {
                         tabMob[idMob].text = game.add.text((randomColonne * 150) + 38, -50, tabSeq[randomSeq], 'Macondo');
                     }
-
+                    groupeMobs.add(tabMob[idMob]);
+                    groupeMobs.add(tabMob[idMob].text);
 
                     tabMob[idMob].sequence.fontSize = 40;
                     console.log(tabMob);
@@ -271,6 +280,7 @@
                 
                 function animVie(){
                     
+                    coeur.kill();
                     nbVie = 'coeur'+vie;
                     coeur = game.add.sprite(15, 680, nbVie);
                     coeur.scale.setTo(0.7, 0.7);
