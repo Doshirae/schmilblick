@@ -49,6 +49,8 @@
                 var plateau;
                 var parcho;
                 var joubert;
+                var joubertS;
+                var joubertV;
                 var coeur;
                 var affiScore;
 
@@ -108,7 +110,15 @@
                     //Ajout des images qui changent en fonction d'états
                     joubert = game.add.sprite(660, 510, 'joubertN');
                     joubert.scale.setTo(0.8, 0.8);
-
+                    
+                    joubertS = game.add.sprite(660, 510, 'joubertS');
+                    joubertS.scale.setTo(0.8, 0.8);
+                    joubertS.visible=false;
+                    
+                    joubertV = game.add.sprite(660, 510, 'joubertV');
+                    joubertV.scale.setTo(0.8, 0.8);
+                    joubertV.visible=false;
+                     
                     coeur = game.add.sprite(15, 680, 'coeur4');
                     coeur.scale.setTo(0.7, 0.7);
 
@@ -161,6 +171,7 @@
                         if (tabMob[cptMob].y >= 675 && tabMob[cptMob].alive == true) {
                             tabMob[cptMob].kill();
                             vie--;
+                            animJoubertD(joubert);
                             if (vie <= 0) {
                                 game.paused = true;
                             }
@@ -168,6 +179,7 @@
 
                         if (tabMob[cptMob].sequence.length == 0 && tabMob[cptMob].alive == true) {
                             tabMob[cptMob].kill();
+                            
                             animJoubert(joubert);
                             score++;
                         }
@@ -287,6 +299,9 @@
                     } else {
                         tabMob[idMob].text = game.add.text((randomColonne * 150) + 38, -50, tabSeq[randomSeq], 'Macondo');
                     }
+                    
+                    tabMob[idMob].text.font='Macando';
+                    tabMob[idMob].text.fontSize=40;
                     groupeMobs.add(tabMob[idMob]);
                     groupeMobs.add(tabMob[idMob].text);
 
@@ -402,21 +417,36 @@
                     coeur = game.add.sprite(15, 680, nbVie);
                     coeur.scale.setTo(0.7, 0.7);
                 }
+                
+                function animJoubert(joubert){
+                  
+                    joubert.visible = false;
 
-                function animJoubert(joubert) {
+                    joubertS.visible= true;
 
-                    joubert.kill();
-                    joubert = game.add.sprite(660, 510, 'joubertS');
-                    joubert.scale.setTo(0.8, 0.8);
+                    setTimeout(function() {
+                        
+                       
+                    joubertS.visible = false;
+                    joubert.visible= true;
+                    }, 400);
+                    
+                    
+                }
+                
+                 function animJoubertD(joubert){
+                  
+                    
+                    joubert.visible = false;
+                    joubertV.visible= true;
 
-
-                    setTimeout(function () {
-                        joubert.kill();
-                        joubert = game.add.sprite(660, 510, 'joubertN');
-                        joubert.scale.setTo(0.8, 0.8);
-
-                    }, 300);
-
+                    setTimeout(function() {
+                       joubertV.visible= false;
+                       joubert.visible = true;
+                    
+                    
+                    }, 400);
+                    
                 }
 
 
