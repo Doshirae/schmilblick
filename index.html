@@ -36,7 +36,6 @@
                 var bonus;
                 var spawn;
                 var tabMob = [];
-                var bonus;
                 var consonne = ["z", "r", "t", "p", "s", "f", "j", "k", "w", "x", "v"];
                 var voyelle = ["a", "e", "u", "i", "o"];
                 var correct = [];
@@ -53,7 +52,7 @@
                 var joubertV;
                 var coeur;
                 var affiScore;
-
+                
                 function preload() {
                     //Polices
                     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -62,7 +61,9 @@
                     game.load.crossOrigin = 'anonymous';
 
                     //Images
+                    
                     game.load.image('monstre', 'images/monstre.png');
+                    game.load.image('mort', 'images/mort.png');
                     game.load.image('background', 'images/background.png');
                     game.load.image('coeur0', 'images/coeur0.png');
                     game.load.image('coeur1', 'images/coeur1.png');
@@ -74,35 +75,37 @@
                     game.load.image('joubertS', 'images/joubertSort.png');
                     game.load.image('parcho', 'images/parcho.png');
                     game.load.image('plateau', 'images/plateau.png');
-                    game.load.image('monstre1', 'images/monstre1.png');
-                    game.load.image('monstre2', 'images/monstre2.png');
-                    game.load.image('monstre3', 'images/monstre3.png');
+                    game.load.spritesheet('monstre1', 'images/animonstre1.png', 300, 300, 2);
+                    game.load.spritesheet('monstre2', 'images/animonstre2.png', 300, 300, 2);
+                    game.load.spritesheet('monstre3', 'images/animonstre3.png', 300, 300, 4);
                     game.load.image('bonus1', 'images/bonus1.png');
                     game.load.image('bonus2', 'images/bonus2.png');
 
                     //sons
-                    game.load.audio('spawn', 'son/spawn.wav');
+                    game.load.audio('neck', 'son/neck.mp3');
+                    game.load.audio('music1', 'son/music1.mp3');
                 }
 
 
                 function create() {
-
+                 
                     //Groupes pour positionner les images
                     groupeMobs = game.add.group();
-
-
-
+                    
+                    
+                   
 
                     //Ajout des images
+                    
                     background = game.add.sprite(0, 0, 'background');
-
+                    
                     plateau = game.add.sprite(game.world.centerX, game.world.height, 'plateau');
                     plateau.anchor.setTo(0.5, 1);
 
                     parcho = game.add.sprite(250, 680, 'parcho');
                     parcho.scale.setTo(0.8, 0.8);
-
-
+                    
+                    
                     game.world.bringToTop(plateau);
                     game.world.bringToTop(parcho);
 
@@ -123,8 +126,8 @@
                     coeur.scale.setTo(0.7, 0.7);
 
                     //Audio
-                    spawn = game.add.audio('spawn');
-
+                    neck = game.add.audio('neck');
+                    music1 = game.add.audio('music1');
 
                     //On initialise l'ensemble des mots possibles
                     initTabSeq();
@@ -132,7 +135,7 @@
                     console.log(tabSeq);
 
                     //Boucle principale qui fait pop les monstres et bonus
-                    timerPop = game.time.events.loop(2 * (Phaser.Timer.SECOND), createMob, this);
+                    timerPop = game.time.events.loop(2*(Phaser.Timer.SECOND), createMob, this);
                     timerPop2 = game.time.events.loop(20 * (Phaser.Timer.SECOND), createBonus, this);
 
 
@@ -142,33 +145,31 @@
                     }
 
                     //Repérage des inputs clavier
-                    //game.input.keyboard.addCallbacks(this, null, null, keyPress);
                     game.input.keyboard.addCallbacks(this, null, null, keyPress2);
-
-
-
-                    affiScore = game.add.text(820, 20, score, 'Macondo');
-
+                    
+                    
+                    affiScore = game.add.text(460, 712, score, 'Macondo');
+                    music1.loopFull(1);
                 }
 
-                function update() {
 
+
+                function update() {
+                    
                     //Mettre les objets au premier plan
                     game.world.sendToBack(background);
-
+                    
                     game.world.bringToTop(joubert);
-                      animVie();
+                    animVie();
                     game.world.bringToTop(coeur);
+                    
 
-
-
+                    
 
                     //Boucle qui repère si les monstres dépassent la limite, enleve de la vie si ils touchent et les tuent quand toutes les lettres sont tapées
                     var cptMob = 0;
-                    var cptBonus = 0;
                     while (tabMob[cptMob] != null) {
-
-                        if (tabMob[cptMob].y >= 675 && tabMob[cptMob].alive == true) {
+                        if (tabMob[cptMob].y >= 650 && tabMob[cptMob].alive == true) {
                             tabMob[cptMob].kill();
                             vie--;
                             animJoubertD(joubert);
@@ -176,14 +177,12 @@
                                 game.paused = true;
                             }
                         }
-
-                        if (tabMob[cptMob].sequence.length == 0 && tabMob[cptMob].alive == true) {
+                        if (tabMob[cptMob].sequence.length == 0 && tabMob[cptMob].alive==true) { 
                             tabMob[cptMob].kill();
-                            
+                            animMort(cptMob);
                             animJoubert(joubert);
-                            score++;
+                            score+=100;
                         }
-
                         if (isBonus) {
                             if (bonus.y >= 675) {
                                 bonus.kill();
@@ -192,6 +191,7 @@
 
                             if (bonus.sequence.length == 0 ) {
                                 bonus.kill();
+                                animMort2();
                                 animJoubert(joubert);
                                 isBonus = false;
 
@@ -199,21 +199,22 @@
                                     vie++;
                                 }
                             }
-                            
-                       }                     
-                       cptBonus++;
-                       cptMob++;
+                        } 
+                        cptMob++;
                     }
                     affiScore.setText(score);
+                    
 
                 }
-                
+
+
+
                 function render() {
                     game.debug.text(score);
                 }
-
-
-
+                
+                
+                
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +243,7 @@
                     }
 
                 }
-
+                
                 function keyPress2(char) { //Repère les appui et si ils correspondent aux bonnes lettres
                     var i,j;
                     for (j = 0; j < tabMob.length; j++) {
@@ -269,28 +270,44 @@
                     }
 
                 }
-
-
-
+                
+                
                 function createMob() { // Explicite
 
                     var randomColonne;
                     var randomMonstre;
                     var nomMonstre;
-
+                    var randomSeq;
                     coeffDown();
-
-                    spawn.play();
+                   
                     randomMonstre = game.rnd.integerInRange(1, 3);
                     randomColonne = game.rnd.integerInRange(0, 5);
+                    if(idMob%2 === 0){
+                        if(randomColonne%2 !== 0){
+                            if (randomColonne ===5){
+                                randomColonne--;
+                            }
+                            else{
+                                randomColonne++;
+                            }
+                        }
+                    }
+                        else{
+                             if(randomColonne%2 !== 1){
+                                 randomColonne++;
+                             }
+                        }
+                    
                     randomSeq = game.rnd.integerInRange(0, 19);
                     nomMonstre = 'monstre' + randomMonstre;
                     monstre = game.add.sprite(randomColonne * 150, -200, nomMonstre);
-                    if (idMob > 50) {
+                    var anim = monstre.animations.add('anim');
+                    monstre.animations.play('anim', 2, true);
+                    if (idMob > 50){
                         idMob = 0;
                     }
                     tabMob[idMob] = monstre;
-
+                    
                     tabMob[idMob].sequence = tabSeq[randomSeq];
 
 
@@ -316,31 +333,19 @@
                     tabMob[idMob].text.body.velocity.y = 100;
                     idMob++;
                 }
-
-
+                
                 function createBonus() { // Explicite
-
                     var randomColonne;
                     var randomBonus;
                     var nomBonus;
 
-                    spawn.play();
                     randomBonus = game.rnd.integerInRange(1, 2);
                     randomColonne = game.rnd.integerInRange(0, 5);
                     randomSeq = game.rnd.integerInRange(0, 19);
                     nomBonus = 'bonus' + randomBonus;
                     bonus = game.add.sprite(randomColonne * 150, -200, nomBonus);
-                 /*   if (idBonus > 5) {
-                        idBonus = 0;
-                    }*/
                     console.log(bonus);
-                    //tabBonus[idBonus] = bonus;
-
-                   // tabBonus[idBonus].sequence = tabSeq2[randomSeq];
                     bonus.sequence = tabSeq2[randomSeq];
-
-
-
                     if (tabSeq2[randomSeq].length != 4) {
                         bonus.text = game.add.text((randomColonne * 150) + 22, -50, tabSeq2[randomSeq], 'Macondo');
                     } else {
@@ -349,7 +354,7 @@
                     groupeMobs.add(bonus);
                     groupeMobs.add(bonus.text);
 
-                   bonus.sequence.fontSize = 40;
+                    bonus.sequence.fontSize = 40;
 
 
                     bonus.scale.setTo(0.5, 0.5);
@@ -360,10 +365,7 @@
                     bonus.text.body.velocity.y = 100;
                     isBonus = true;
                 }
-
-
-
-
+               
                 function coeffDown() { // Fonction qui accélère le spawn
                     if (coeff <= 1000) {
                         coeff += 10;
@@ -374,7 +376,7 @@
 
 
 
-                function createSequence() {// Crée ensemble des mots possibles pour Mob
+                function createSequence() {// Crée ensemble des mots possibles
                     var sequence = "";
                     randomI = game.rnd.integerInRange(2, 3);
                     for (var i = 0; i < randomI; i++) {
@@ -384,7 +386,7 @@
                     }
                     return sequence;
                 }
-
+                
                 function createSequence2() {// Crée ensemble des mots possibles pour Bonus
                     var sequence = "";
                     randomI = game.rnd.integerInRange(4, 5);
@@ -395,38 +397,33 @@
                     }
                     return sequence;
                 }
-
+                
                 function initTabSeq() { //Init le tyableau des mots possibles
                     for (var i = 0; i < 20; i++) {
                         tabSeq[i] = createSequence();
                     }
                 }
-
+                
                 function initTabSeq2() { //Init le tyableau des mots possibles
                     for (var i = 0; i < 20; i++) {
                         tabSeq2[i] = createSequence2();
                     }
                 }
-
-
-
-                function animVie() {
-
+                
+                
+                
+                function animVie(){
                     coeur.kill();
-                    nbVie = 'coeur' + vie;
+                    nbVie = 'coeur'+vie;
                     coeur = game.add.sprite(15, 680, nbVie);
                     coeur.scale.setTo(0.7, 0.7);
                 }
                 
                 function animJoubert(joubert){
-                  
                     joubert.visible = false;
-
                     joubertS.visible= true;
-
+                    
                     setTimeout(function() {
-                        
-                       
                     joubertS.visible = false;
                     joubert.visible= true;
                     }, 400);
@@ -435,20 +432,33 @@
                 }
                 
                  function animJoubertD(joubert){
-                  
-                    
                     joubert.visible = false;
                     joubertV.visible= true;
 
                     setTimeout(function() {
                        joubertV.visible= false;
                        joubert.visible = true;
-                    
-                    
                     }, 400);
-                    
                 }
-
+                
+                function animMort(idMob){
+                    neck.play();
+                    var posX = tabMob[idMob].x; 
+                    var posY = tabMob[idMob].y;
+                    var mort = game.add.sprite(posX-10, posY, 'mort');
+                    mort.scale.setTo(0.6, 0.6);
+                    game.add.tween(mort).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, false);    
+                }
+                
+                function animMort2(){
+                    neck.play();
+                    var posX = bonus.x; 
+                    var posY = bonus.y;
+                    var mort = game.add.sprite(posX-10, posY, 'mort');
+                    mort.scale.setTo(0.6, 0.6);
+                    game.add.tween(mort).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, false);    
+                }
+                
 
 
             };
