@@ -50,6 +50,7 @@
                 var joubert;
                 var joubertS;
                 var joubertV;
+                var joubertB;
                 var coeur;
                 var affiScore;
 
@@ -73,6 +74,7 @@
                     game.load.image('joubertN', 'images/joubertNormal.png');
                     game.load.image('joubertV', 'images/joubertVener.png');
                     game.load.image('joubertS', 'images/joubertSort.png');
+                    game.load.image('joubertB', 'images/joubertBonus.png');
                     game.load.image('parcho', 'images/parcho.png');
                     game.load.image('plateau', 'images/plateau.png');
                     game.load.spritesheet('monstre1', 'images/animonstre1.png', 300, 300, 2);
@@ -121,6 +123,10 @@
                     joubertV = game.add.sprite(660, 510, 'joubertV');
                     joubertV.scale.setTo(0.8, 0.8);
                     joubertV.visible = false;
+                    
+                    joubertB = game.add.sprite(660, 510, 'joubertB');
+                    joubertB.scale.setTo(0.8, 0.8);
+                    joubertB.visible = false;
 
                     coeur = game.add.sprite(15, 680, 'coeur4');
                     coeur.scale.setTo(0.7, 0.7);
@@ -193,8 +199,9 @@
 
                             if (bonus.sequence.length == 0) {
                                 bonus.kill();
+
                                 animMort2();
-                                animJoubert(joubert);
+                                animJoubertB(joubert);
                                 isBonus = false;
 
                                 if (vie < 4) {
@@ -279,11 +286,11 @@
                     var randomSeq;
                     var colonnesPaires = [0, 2, 4];
                     var calonnesImpaires = [1, 2];
-                    
+
                     coeffDown();
 
                     randomMonstre = game.rnd.integerInRange(1, 3);
-                    
+
                     if (idMob % 2 === 0) {
                         randomColonne = colonnesPaires[game.rnd.integerInRange(0, 2)];
                     } else {
@@ -379,7 +386,7 @@
 
                 function createSequence2() {// Crée ensemble des mots possibles pour Bonus
                     var sequence = "";
-                    randomI = game.rnd.integerInRange(4, 5);
+                    randomI = game.rnd.integerInRange(4, 4);
                     for (var i = 0; i < randomI; i++) {
                         randomV = game.rnd.integerInRange(0, 4);
                         randomC = game.rnd.integerInRange(0, 10);
@@ -421,12 +428,34 @@
 
                 }
 
+                function animJoubert(joubert) {
+                    joubert.visible = false;
+                    joubertS.visible = true;
+
+                    setTimeout(function () {
+                        joubertS.visible = false;
+                        joubert.visible = true;
+                    }, 400);
+
+
+                }
+
                 function animJoubertD(joubert) {
                     joubert.visible = false;
                     joubertV.visible = true;
 
                     setTimeout(function () {
                         joubertV.visible = false;
+                        joubert.visible = true;
+                    }, 400);
+                }
+
+                function animJoubertB(joubert) {
+                    joubert.visible = false;
+                    joubertB.visible = true;
+
+                    setTimeout(function () {
+                        joubertB.visible = false;
                         joubert.visible = true;
                     }, 400);
                 }
